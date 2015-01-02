@@ -2,19 +2,36 @@
 
 Project enables deployment of Spring SAML applications in Google Application Engine.
 
-## Metadata loading
+## Introduction
+
+Google Application Engine doesn't by default support starting of new threads and direct usage of sockets. The following classes introduce usage of GAE specific APIs for operations involving these components.
+
+### Metadata loading
 
 Provider enables population of SAML meatadata from filesystem. The implementation removes all automated reloading which is not supported by GAE due to limitations on starting of new threads.
 
 **Implementation:** `org.springframework.security.saml.metadata.provider.StaticFilesystemMetadataProvider`
 
-## Artifact resolution
+### Artifact resolution
 
 Enables loading of SAML responses using HTTP-Artifact binding using classes available in GAE API.
 
 **Implementation:** `org.springframework.security.saml.websso.google.ArtifactResolutionProfileGAE`
 
 ## Usage
+
+### Maven dependency
+
+Include the compiled library (`mvn install`) as a dependency in your Spring SAML project, e.g.:
+```
+<dependency>
+    <groupId>org.springframework.security.extensions</groupId>
+    <artifactId>spring-security-saml2-gae</artifactId>
+    <version>1.0.0.RELEASE-SNAPSHOT</version>
+</dependency>
+```
+
+### Spring SAML configuration
 
 In order to install artifact resolution using GAE specific APIs, replace bean `org.springframework.security.saml.websso.ArtifactResolutionProfileImpl` with `org.springframework.security.saml.websso.google.ArtifactResolutionProfileGAE` in your Spring SAML configuration XML.
 
@@ -36,3 +53,7 @@ In order to use metadata loading without reloading threads add a provider to you
     </constructor-arg>
 </bean>
 ```
+
+### GAE application descriptor
+
+Spring SAML relies on usage of HTTP sessions. Make sure to enable their usage in `appengine-web.xml` using element `<sessions-enabled>true</sessions-enabled>`.
