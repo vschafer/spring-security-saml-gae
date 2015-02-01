@@ -33,7 +33,21 @@ Include the compiled library (`mvn install`) as a dependency in your Spring SAML
 
 ### Spring SAML configuration
 
-In order to install artifact resolution using GAE specific APIs, replace bean `org.springframework.security.saml.websso.ArtifactResolutionProfileImpl` with `org.springframework.security.saml.websso.google.ArtifactResolutionProfileGAE` in your Spring SAML configuration XML.
+In order to install artifact resolution using GAE specific APIs, replace bean `org.springframework.security.saml.websso.ArtifactResolutionProfileImpl` with `org.springframework.security.saml.websso.google.ArtifactResolutionProfileGAE` in your Spring SAML configuration XML. The configuration of the whole artifactBinding will be:
+
+<bean id="artifactBinding" class="org.springframework.security.saml.processor.HTTPArtifactBinding">
+    <constructor-arg ref="parserPool"/>
+    <constructor-arg ref="velocityEngine"/>
+    <constructor-arg>
+        <bean class="org.springframework.security.saml.websso.google.ArtifactResolutionProfileGAE">
+            <property name="processor">
+                <bean class="org.springframework.security.saml.processor.SAMLProcessorImpl">
+                    <constructor-arg ref="soapBinding"/>
+                </bean>
+            </property>
+        </bean>
+    </constructor-arg>
+</bean>
 
 In order to use metadata loading without reloading threads add a provider to your metadata bean with:
 
@@ -53,6 +67,8 @@ In order to use metadata loading without reloading threads add a provider to you
     </constructor-arg>
 </bean>
 ```
+
+All the other existing providers should be removed from the metadata bean, as they use implementation classes incompatible with GAE.
 
 ### GAE application descriptor
 
