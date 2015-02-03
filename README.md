@@ -72,6 +72,19 @@ In order to use metadata loading without reloading threads add a provider to you
 
 All the other existing providers should be removed from the metadata bean, as they use implementation classes incompatible with GAE.
 
+Also, you need to set property **refreshCheckInterval** on bean **metadata** to value 0:
+
+```
+<bean id="metadata" class="org.springframework.security.saml.metadata.CachingMetadataManager">
+    <constructor-arg>
+        <list>
+            ... metadata ...
+        </list>
+    </constructor-arg>
+    <property name="refreshCheckInterval" value="0"/>
+</bean>
+```
+
 ### GAE application descriptor
 
 Spring SAML relies on usage of HTTP sessions. Make sure to enable their usage in `appengine-web.xml` using element `<sessions-enabled>true</sessions-enabled>`.
